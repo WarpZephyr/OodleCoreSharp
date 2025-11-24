@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OodleCoreSharp", "OodleCoreSharp\OodleCoreSharp.csproj", "{289B990E-7C90-4FF3-86DE-A34A89F800CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edoke", "..\Edoke\Edoke\Edoke.csproj", "{CC121821-EAAD-A644-3F31-00EF605F8BB4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{289B990E-7C90-4FF3-86DE-A34A89F800CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{289B990E-7C90-4FF3-86DE-A34A89F800CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{289B990E-7C90-4FF3-86DE-A34A89F800CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{289B990E-7C90-4FF3-86DE-A34A89F800CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC121821-EAAD-A644-3F31-00EF605F8BB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC121821-EAAD-A644-3F31-00EF605F8BB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC121821-EAAD-A644-3F31-00EF605F8BB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC121821-EAAD-A644-3F31-00EF605F8BB4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B1915AC4-FA33-4CE1-B2AA-489EEAACEDBE}
+	EndGlobalSection
+EndGlobal

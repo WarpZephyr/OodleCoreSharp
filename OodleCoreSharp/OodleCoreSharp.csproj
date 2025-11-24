@@ -1,0 +1,81 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<Configurations>Debug;Release;Debug-win;Release-win;Debug-linux;Release-linux;Debug-osx;Release-osx</Configurations>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="$(Configuration.StartsWith('Debug'))">
+    <DefineConstants>DEBUG</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.StartsWith('Release'))">
+    <DefineConstants>RELEASE</DefineConstants>
+    <DebugType>embedded</DebugType>
+    <DocumentationFile />
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="$(Configuration.EndsWith('-win')) Or !$(Configuration.Contains('-'))">
+    <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.EndsWith('-linux'))">
+    <DefineConstants>$(DefineConstants);LINUX</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.EndsWith('-osx'))">
+    <DefineConstants>$(DefineConstants);OSX</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Edoke\Edoke\Edoke.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(Configuration.EndsWith('-win')) Or !$(Configuration.Contains('-'))">
+    <None Update="oo2core_5_win64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="oo2core_6_win64.dll">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="oo2core_8_win64.dll">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="oo2core_9_win64.dll">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup Condition="$(Configuration.EndsWith('-linux')) Or !$(Configuration.Contains('-'))">
+    <None Update="liboo2corelinux64.so.5">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="liboo2corelinux64.so.6">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="liboo2corelinux64.so.8">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="liboo2corelinux64.so.9">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup Condition="$(Configuration.EndsWith('-osx')) Or !$(Configuration.Contains('-'))">
+    <None Update="liboo2coremac64.2.5.dylib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="liboo2coremac64.2.6.dylib">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="liboo2coremac64.2.8.dylib">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="liboo2coremac64.2.9.dylib">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
