@@ -32,7 +32,7 @@ namespace OodleCoreSharp
         /// </summary>
         /// <returns>Whether or not oodle5 is available.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool CanUseOodle5()
+        public static bool CanUseOodle5()
         {
             if (Oodle5Exists)
                 return true;
@@ -50,7 +50,7 @@ namespace OodleCoreSharp
         /// </summary>
         /// <returns>Whether or not oodle6 is available.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool CanUseOodle6()
+        public static bool CanUseOodle6()
         {
             if (Oodle6Exists)
                 return true;
@@ -68,7 +68,7 @@ namespace OodleCoreSharp
         /// </summary>
         /// <returns>Whether or not oodle8 is available.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool CanUseOodle8()
+        public static bool CanUseOodle8()
         {
             if (Oodle8Exists)
                 return true;
@@ -86,7 +86,7 @@ namespace OodleCoreSharp
         /// </summary>
         /// <returns>Whether or not oodle9 is available.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool CanUseOodle9()
+        public static bool CanUseOodle9()
         {
             if (Oodle9Exists)
                 return true;
