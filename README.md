@@ -47,12 +47,20 @@ This may be expanded in the future.
 | 2.9    | <ul><li>Windows (Untested)</li><li>Linux (Untested)</li><li>OSX (Untested)</li></ul> |
 
 # Building
+Clone or download this projects somewhere:  
+```
+git clone https://github.com/WarpZephyr/OodleCoreSharp.git  
+```
+
 This project requires the following libraries to be cloned alongside it.  
 Place them in the same top-level folder as this project.  
 These dependencies may change at any time.  
 ```
 git clone https://github.com/WarpZephyr/Edoke.git  
 ```
+
+Then build the project in Visual Studio 2022.  
+Other IDEs or build solutions are untested.  
 
 # Credits
 Thanks to [SoulsFormatsNEXT](https://github.com/soulsmods/SoulsFormatsNEXT) for some initial ideas on how to pull this off.
