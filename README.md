@@ -47,7 +47,7 @@ This may be expanded in the future.
 | 2.9    | <ul><li>Windows (Untested)</li><li>Linux (Untested)</li><li>OSX (Untested)</li></ul> |
 
 # Building
-Clone or download this projects somewhere:  
+Clone or download this project somewhere:  
 ```
 git clone https://github.com/WarpZephyr/OodleCoreSharp.git  
 ```
