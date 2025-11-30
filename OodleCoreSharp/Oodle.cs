@@ -5,6 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace OodleCoreSharp
 {
+    /// <summary>
+    /// A central point of access for oodle related functions.
+    /// </summary>
     public static class Oodle
     {
         /// <summary>

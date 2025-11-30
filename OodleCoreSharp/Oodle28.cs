@@ -4,6 +4,9 @@ using System.Runtime.InteropServices;
 
 namespace OodleCoreSharp
 {
+    /// <summary>
+    /// Oodle major version 8.
+    /// </summary>
     public partial class Oodle28 : IOodleCompressor
     {
         /// <summary>

@@ -2,6 +2,9 @@
 
 namespace OodleCoreSharp
 {
+    /// <summary>
+    /// An interface for using different versions of oodle with ease.
+    /// </summary>
     public interface IOodleCompressor
     {
         /// <summary>
