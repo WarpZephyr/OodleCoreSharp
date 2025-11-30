@@ -16,7 +16,7 @@ namespace OodleCoreSharp
         /// <summary>
         /// Verbosity of compression.
         /// </summary>
-        public uint Verbosity;
+        public OodleLZ_Verbosity Verbosity;
 
         /// <summary>
         /// Minimum match length; Cannot be used to reduce a compressor's default MML, but can be higher. On some types of data, a large MML (6 or 8) is a space-speed win.
