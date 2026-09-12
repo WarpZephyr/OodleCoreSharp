@@ -102,7 +102,7 @@ namespace OodleCoreSharp
         public long GetCompressedBufferSizeNeeded(
             OodleLZ_Compressor compressor,
             long rawSize)
-            => OodleLZ_GetCompressedBufferSizeNeeded(compressor, rawSize);
+            => OodleLZ_GetCompressedBufferSizeNeeded(compressor, (nint)rawSize);
 
         /// <summary>
         /// The decode buffer size required for the specified raw length.
@@ -116,7 +116,7 @@ namespace OodleCoreSharp
             OodleLZ_Compressor compressor,
             long rawSize,
             bool corruptionPossible)
-            => OodleLZ_GetDecodeBufferSize(compressor, rawSize, corruptionPossible);
+            => OodleLZ_GetDecodeBufferSize(compressor, (nint)rawSize, corruptionPossible);
 
         #endregion
 
@@ -147,17 +147,17 @@ namespace OodleCoreSharp
 #endif
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-        private static unsafe partial long OodleLZ_Compress(
+        private static unsafe partial nint OodleLZ_Compress(
             OodleLZ_Compressor compressor,
             byte* rawBuf,
-            long rawLen,
+            nint rawLen,
             byte* compBuf,
             OodleLZ_CompressionLevel level,
             OodleLZ_CompressOptions* pOptions = null,
             nint dictionaryBase = 0,
             nint lrm = 0,
             nint scratchMem = 0,
-            long scratchSize = 0);
+            nint scratchSize = 0);
 
         /// <summary>
         /// Decompress some data from memory to memory, synchronously.
@@ -190,20 +190,20 @@ namespace OodleCoreSharp
 #endif
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-        private static unsafe partial long OodleLZ_Decompress(
+        private static unsafe partial nint OodleLZ_Decompress(
             byte* compBuf,
-            long compBufSize,
+            nint compBufSize,
             byte* rawBuf,
-            long rawLen,
+            nint rawLen,
             OodleLZ_FuzzSafe fuzzSafe = OodleLZ_FuzzSafe.Yes,
             OodleLZ_CheckCRC checkCRC = OodleLZ_CheckCRC.No,
             OodleLZ_Verbosity verbosity = OodleLZ_Verbosity.None,
             nint decBufBase = 0,
-            long decBufSize = 0,
+            nint decBufSize = 0,
             nint fpCallback = 0,
             nint callbackUserData = 0,
             nint decoderMemory = 0,
-            long decoderMemorySize = 0,
+            nint decoderMemorySize = 0,
             OodleLZ_Decode_ThreadPhase threadPhase = OodleLZ_Decode_ThreadPhase.Unthreaded);
 
         /// <summary>
@@ -242,9 +242,9 @@ namespace OodleCoreSharp
 #endif
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-        private static partial long OodleLZ_GetCompressedBufferSizeNeeded(
+        private static partial nint OodleLZ_GetCompressedBufferSizeNeeded(
             OodleLZ_Compressor compressor,
-            long rawSize);
+            nint rawSize);
 
         /// <summary>
         /// The decode buffer size required for the specified raw length.
@@ -262,9 +262,9 @@ namespace OodleCoreSharp
 #endif
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-        private static partial long OodleLZ_GetDecodeBufferSize(
+        private static partial nint OodleLZ_GetDecodeBufferSize(
             OodleLZ_Compressor compressor,
-            long rawSize,
+            nint rawSize,
             [MarshalAs(UnmanagedType.Bool)] bool corruptionPossible);
 
         #endregion
