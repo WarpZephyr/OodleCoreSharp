@@ -1,13 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Project Properties -->
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
+	<LangVersion>latest</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<Configurations>Debug;Release;Debug-win;Release-win;Debug-linux;Release-linux;Debug-osx;Release-osx</Configurations>
   </PropertyGroup>
+
+  <!-- Aot Properties -->
+  <PropertyGroup>
+	<IsAotCompatible>True</IsAotCompatible>
+  </PropertyGroup>
+
+  <!-- Analyzer Properties -->
+  <PropertyGroup>
+	<AnalysisMode>All</AnalysisMode>
+	<!-- 
+      CA1707: Remove underscores from the type name (Native Interop and Consistency)
+	  CA1008: Add a member that has a value of zero with a suggested name of 'None' (Native Interop)
+	  IDE0130: Namespace does not match folder structure (Safer and simpler namespace for Native types)
+    -->
+	<NoWarn>$(NoWarn);CA1707;CA1008;IDE0130</NoWarn>
+  </PropertyGroup>
   
+  <!-- Platform Macro Properties -->
   <PropertyGroup Condition="$(Configuration.StartsWith('Debug'))">
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
@@ -29,10 +48,6 @@
   <PropertyGroup Condition="$(Configuration.EndsWith('-osx'))">
     <DefineConstants>$(DefineConstants);OSX</DefineConstants>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Edoke\Edoke\Edoke.csproj" />
-  </ItemGroup>
 
   <ItemGroup Condition="$(Configuration.EndsWith('-win')) Or !$(Configuration.Contains('-'))">
     <None Update="oo2core_5_win64.dll">

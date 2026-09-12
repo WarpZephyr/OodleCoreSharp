@@ -140,14 +140,13 @@ namespace OodleCoreSharp
         /// <returns>Size of compressed data written, or <see cref="OODLELZ_FAILED"/> for failure.</returns>
 #if WINDOWS
         [LibraryImport("oo2core_6_win64.dll")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #elif OSX
         [LibraryImport("liboo2coremac64.2.6.dylib")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #elif LINUX
         [LibraryImport("liboo2corelinux64.so.6")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #endif
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
         private static unsafe partial long OodleLZ_Compress(
             OodleLZ_Compressor compressor,
             byte* rawBuf,
@@ -184,14 +183,13 @@ namespace OodleCoreSharp
         /// <returns>The number of decompressed bytes output, <see cref="OODLELZ_FAILED"/> if none can be decompressed.</returns>
 #if WINDOWS
         [LibraryImport("oo2core_6_win64.dll")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #elif OSX
         [LibraryImport("liboo2coremac64.2.6.dylib")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #elif LINUX
         [LibraryImport("liboo2corelinux64.so.6")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #endif
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
         private static unsafe partial long OodleLZ_Decompress(
             byte* compBuf,
             long compBufSize,
@@ -217,14 +215,13 @@ namespace OodleCoreSharp
         /// <returns>A pointer to default compression options.</returns>
 #if WINDOWS
         [LibraryImport("oo2core_6_win64.dll")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #elif OSX
         [LibraryImport("liboo2coremac64.2.6.dylib")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #elif LINUX
         [LibraryImport("liboo2corelinux64.so.6")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #endif
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
         private static unsafe partial OodleLZ_CompressOptions* OodleLZ_CompressOptions_GetDefault(
             OodleLZ_Compressor compressor = OodleLZ_Compressor.Invalid,
             OodleLZ_CompressionLevel lzLevel = OodleLZ_CompressionLevel.Normal);
@@ -237,14 +234,13 @@ namespace OodleCoreSharp
         /// <returns>The maximum expanded size for compBuf alloc.</returns>
 #if WINDOWS
         [LibraryImport("oo2core_6_win64.dll")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #elif OSX
         [LibraryImport("liboo2coremac64.2.6.dylib")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #elif LINUX
         [LibraryImport("liboo2corelinux64.so.6")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #endif
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
         private static partial long OodleLZ_GetCompressedBufferSizeNeeded(long rawSize);
 
         /// <summary>
@@ -255,14 +251,13 @@ namespace OodleCoreSharp
         /// <returns>The decode buffer size required for the specified raw length.</returns>
 #if WINDOWS
         [LibraryImport("oo2core_6_win64.dll")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #elif OSX
         [LibraryImport("liboo2coremac64.2.6.dylib")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #elif LINUX
         [LibraryImport("liboo2corelinux64.so.6")]
-        [UnmanagedCallConv(CallConvs = new Type[] { typeof(CallConvStdcall) })]
 #endif
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
         private static partial long OodleLZ_GetDecodeBufferSize(
             long rawSize,
             [MarshalAs(UnmanagedType.Bool)] bool corruptionPossible);

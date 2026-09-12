@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace OodleCoreSharp
 {
@@ -6,7 +7,7 @@ namespace OodleCoreSharp
     /// Options for the compressor.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct OodleLZ_CompressOptions
+    public struct OodleLZ_CompressOptions : IEquatable<OodleLZ_CompressOptions>
     {
         /// <summary>
         /// Maximum value of <see cref="MaxLocalDictionarySize"/> in <see cref="OodleLZ_CompressOptions"/>.
@@ -79,5 +80,70 @@ namespace OodleCoreSharp
         /// (Non-Optimals) When variable, sets the size of the match finder structure (often a hash table); Use 0 for the compressor's default.
         /// </summary>
         public int MatchTableSizeLog2;
+
+        #region Equality
+
+        /// <summary>
+        /// Gets whether or not this instance is equal to another instance.
+        /// </summary>
+        /// <param name="other">The other instance.</param>
+        /// <returns>Whether or not this instance is equal to another instance.</returns>
+        public readonly bool Equals(OodleLZ_CompressOptions other)
+        {
+            return Verbosity == other.Verbosity
+                && MinMatchLen == other.MinMatchLen
+                && SeekChunkReset == other.SeekChunkReset
+                && SeekChunkLen == other.SeekChunkLen
+                && Profile == other.Profile
+                && DictionarySize == other.DictionarySize
+                && SpaceSpeedTradeoffBytes == other.SpaceSpeedTradeoffBytes
+                && MaxHuffmansPerChunk == other.MaxHuffmansPerChunk
+                && SendQuantumCRCs == other.SendQuantumCRCs
+                && MaxLocalDictionarySize == other.MaxLocalDictionarySize
+                && MakeLongRangeMatcher == other.MakeLongRangeMatcher
+                && MatchTableSizeLog2 == other.MatchTableSizeLog2;
+        }
+
+        /// <inheritdoc/>
+        public override readonly bool Equals(object? obj)
+            => obj is OodleLZ_CompressOptions other && Equals(other);
+
+        /// <inheritdoc/>
+        public override readonly int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(Verbosity);
+            hashCode.Add(MinMatchLen);
+            hashCode.Add(SeekChunkLen);
+            hashCode.Add(Profile);
+            hashCode.Add(DictionarySize);
+            hashCode.Add(SpaceSpeedTradeoffBytes);
+            hashCode.Add(MaxHuffmansPerChunk);
+            hashCode.Add(SendQuantumCRCs);
+            hashCode.Add(MaxLocalDictionarySize);
+            hashCode.Add(MakeLongRangeMatcher);
+            hashCode.Add(MatchTableSizeLog2);
+            return hashCode.ToHashCode();
+        }
+
+        /// <summary>
+        /// Compares two <see cref="OodleLZ_CompressOptions"/> for equality.
+        /// </summary>
+        /// <param name="left">The first instance.</param>
+        /// <param name="right">The second instance.</param>
+        /// <returns>The result of the comparsion.</returns>
+        public static bool operator ==(OodleLZ_CompressOptions left, OodleLZ_CompressOptions right)
+            => left.Equals(right);
+
+        /// <summary>
+        /// Compares two <see cref="OodleLZ_CompressOptions"/> for inequality.
+        /// </summary>
+        /// <param name="left">The first instance.</param>
+        /// <param name="right">The second instance.</param>
+        /// <returns>The result of the comparsion.</returns>
+        public static bool operator !=(OodleLZ_CompressOptions left, OodleLZ_CompressOptions right)
+            => !(left == right);
+
+        #endregion
     }
 }

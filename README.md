@@ -52,14 +52,7 @@ Clone or download this project somewhere:
 git clone https://github.com/WarpZephyr/OodleCoreSharp.git  
 ```
 
-This project requires the following libraries to be cloned alongside it.  
-Place them in the same top-level folder as this project.  
-These dependencies may change at any time.  
-```
-git clone https://github.com/WarpZephyr/Edoke.git  
-```
-
-Then build the project in Visual Studio 2022.  
+Then build the project in Visual Studio 2026.  
 Other IDEs or build solutions are untested.  
 
 # Credits

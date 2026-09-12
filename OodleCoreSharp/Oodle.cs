@@ -13,22 +13,22 @@ namespace OodleCoreSharp
         /// <summary>
         /// Whether or not oodle5 is available.
         /// </summary>
-        private static bool Oodle5Exists = false;
+        private static bool Oodle5Exists;
 
         /// <summary>
         /// Whether or not oodle6 is available.
         /// </summary>
-        private static bool Oodle6Exists = false;
+        private static bool Oodle6Exists;
 
         /// <summary>
         /// Whether or not oodle8 is available.
         /// </summary>
-        private static bool Oodle8Exists = false;
+        private static bool Oodle8Exists;
 
         /// <summary>
         /// Whether or not oodle9 is available.
         /// </summary>
-        private static bool Oodle9Exists = false;
+        private static bool Oodle9Exists;
 
         /// <summary>
         /// Whether or not oodle5 is available.
