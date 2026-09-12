@@ -1,5 +1,5 @@
 # OodleCoreSharp
-A simple library to access oodle library functions in C#.  
+A simple C# wrapper for the oodle library, supporting multiple versions.  
 
 # User Usage
 Users using an app which uses this library must find an oodle library file and provide it to the app's folder.  
