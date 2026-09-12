@@ -5,7 +5,7 @@ namespace OodleCoreSharp
     /// <summary>
     /// An interface for using different versions of oodle with ease.
     /// </summary>
-    public interface IOodleCompressor
+    public interface IOodle
     {
         /// <summary>
         /// Compress some data from memory to memory, synchronously, with OodleLZ.
@@ -28,6 +28,7 @@ namespace OodleCoreSharp
         /// </summary>
         /// <param name="compBuf">The buffer of the compressed data.</param>
         /// <param name="rawBuf">The buffer to write the decompressed data to.</param>
+        /// <param name="rawLen">Number of uncompressed bytes to output.</param>
         /// <param name="fuzzSafe">(Optional) Should the decode fail if it contains non-fuzz safe codecs?</param>
         /// <param name="checkCRC">(Optional) If data could be corrupted and you want to know about it, pass <see cref="OodleLZ_CheckCRC.Yes"/>.</param>
         /// <param name="verbosity">(Optional) If not <see cref="OodleLZ_Verbosity.None"/>, logs some info.</param>
@@ -36,6 +37,7 @@ namespace OodleCoreSharp
         public long Decompress(
             ReadOnlySpan<byte> compBuf,
             Span<byte> rawBuf,
+            long rawLen,
             OodleLZ_FuzzSafe fuzzSafe = OodleLZ_FuzzSafe.Yes,
             OodleLZ_CheckCRC checkCRC = OodleLZ_CheckCRC.No,
             OodleLZ_Verbosity verbosity = OodleLZ_Verbosity.None,
@@ -74,5 +76,15 @@ namespace OodleCoreSharp
             OodleLZ_Compressor compressor,
             long rawSize,
             bool corruptionPossible);
+
+        /// <summary>
+        /// Sets the print callback for messages to log into.
+        /// </summary>
+        /// <remarks>
+        /// This relies on a special "oodleinterop" library being loaded successfully to work.<br/>
+        /// Only one may exist per version globally.
+        /// </remarks>
+        /// <param name="callback">The callback to set.</param>
+        public void SetPrint(OodlePrintCallback callback);
     }
 }

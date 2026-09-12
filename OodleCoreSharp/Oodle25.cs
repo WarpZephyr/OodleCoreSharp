@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -7,8 +8,28 @@ namespace OodleCoreSharp
     /// <summary>
     /// Oodle major version 5.
     /// </summary>
-    public partial class Oodle25 : IOodleCompressor
+    public partial class Oodle25 : IOodle
     {
+        /// <summary>
+        /// The library name used for resolution.
+        /// </summary>
+        private const string LibName = "oo2core_5";
+
+        /// <summary>
+        /// A handle to the Oodle5 library.
+        /// </summary>
+        private static nint Handle = Load();
+
+        /// <summary>
+        /// A singleton for <see cref="Oodle25"/>.
+        /// </summary>
+        private static readonly Oodle25 Instance = new();
+
+        /// <summary>
+        /// The current managed print callback.
+        /// </summary>
+        private static OodlePrintCallback? PrintCallback;
+
         /// <summary>
         /// Return value of OodleLZ_Decompress on failure.
         /// </summary>
@@ -19,17 +40,114 @@ namespace OodleCoreSharp
         /// </summary>
         public const int OODLELZ_BLOCK_LEN = 1 << 18;
 
-        #region Managed
+        /// <summary>
+        /// Registers this library to the resolver.
+        /// </summary>
+        static unsafe Oodle25()
+        {
+            NativeResolver.Register(&Resolve);
+            if (OodleInterop.IsLoaded())
+            {
+                if (NativeResolver.TryGetExport(Handle, "OodlePlugins_SetPrintf", out nint pSetPrintf))
+                {
+                    OodleInterop.OodleInterop_Oodle25_SetPrint(pSetPrintf, &UnmanagedPrint);
+                }
+            }
+        }
 
         /// <summary>
-        /// Compress some data from memory to memory, synchronously, with OodleLZ.
+        /// Hide the constructor from the public.
         /// </summary>
-        /// <param name="compressor">Which OodleLZ variant to use in compression.</param>
-        /// <param name="rawBuf">Raw data to compress.</param>
-        /// <param name="compBuf">Buffer to write compressed data to; Should be at least <see cref="GetCompressedBufferSizeNeeded"/> bytes.</param>
-        /// <param name="level"><see cref="OodleLZ_CompressionLevel"/> controls how much CPU effort is put into maximizing compression.</param>
-        /// <param name="options">(Optional) Options; If <see cref="null"/>, <see cref="CompressOptions_GetDefault"/> is used</param>
-        /// <returns>Size of compressed data written, or <see cref="OODLELZ_FAILED"/> for failure.</returns>
+        private Oodle25() { }
+
+        #region Library
+
+        /// <summary>
+        /// The resolver for this library.
+        /// </summary>
+        /// <param name="libraryName">The library name needing resolution.</param>
+        /// <returns>The handle or <see cref="nint.Zero"/> if not found.</returns>
+        private static nint Resolve(string libraryName)
+        {
+            if (libraryName != LibName)
+                return nint.Zero;
+
+            if (Handle != nint.Zero)
+                return Handle;
+
+            TryLoad(out _);
+            return Handle;
+        }
+
+        /// <summary>
+        /// Loads the handle to the library or returns <see cref="nint.Zero"/> if not found.
+        /// </summary>
+        /// <returns>The handle or <see cref="nint.Zero"/> if not found.</returns>
+        private static nint Load()
+        {
+            TryLoad(out _);
+            return Handle;
+        }
+
+        /// <summary>
+        /// Tries to load the Oodle5 library.
+        /// </summary>
+        /// <param name="oodle">An instance for accessing Oodle5 functions, or null.</param>
+        /// <returns>Whether or not the library loaded.</returns>
+        public static bool TryLoad([NotNullWhen(true)] out Oodle25? oodle)
+        {
+            if (Handle != nint.Zero)
+            {
+                oodle = Instance;
+                return true;
+            }
+
+            if (Oodle.TryLoadCore(5, out nint handle))
+            {
+                Handle = handle;
+                oodle = Instance;
+                return true;
+            }
+
+            oodle = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Gets whether or not the library is loaded.
+        /// </summary>
+        /// <returns>Whether or not the library is loaded</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsLoaded()
+            => Handle != nint.Zero;
+
+        #endregion
+
+        #region Interop
+
+        /// <summary>
+        /// Receives print messages from the native side.
+        /// </summary>
+        /// <param name="verbosity">The verbosity of the message.</param>
+        /// <param name="file">The file path associated with the message.</param>
+        /// <param name="line">The file line associated with the message.</param>
+        /// <param name="message">The message.</param>
+        [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+        private static unsafe void UnmanagedPrint(OodleLZ_Verbosity verbosity, byte* file, int line, byte* message)
+        {
+            if (PrintCallback == null)
+                return;
+
+            var fileStr = Marshal.PtrToStringAnsi((nint)file);
+            var msgStr = Marshal.PtrToStringAnsi((nint)message);
+            PrintCallback.Invoke(verbosity, fileStr, line, msgStr);
+        }
+
+        #endregion
+
+        #region Managed
+
+        /// <inheritdoc/>
         public unsafe long Compress(
             OodleLZ_Compressor compressor,
             ReadOnlySpan<byte> rawBuf,
@@ -37,40 +155,38 @@ namespace OodleCoreSharp
             OodleLZ_CompressionLevel level,
             OodleLZ_CompressOptions? options = null)
         {
-            fixed (byte* pRawBuf = &rawBuf[0])
-            fixed (byte* pCompBuf = &compBuf[0])
+            fixed (byte* pRawBuf = rawBuf)
+            fixed (byte* pCompBuf = compBuf)
             {
-                OodleLZ_CompressOptions* pOptions = (OodleLZ_CompressOptions*)&options;
+                if (!options.HasValue)
+                {
+                    return OodleLZ_Compress(compressor, pRawBuf, rawBuf.Length, pCompBuf, level, null);
+                }
+
+                OodleLZ_CompressOptions unwrap = options.Value;
+                OodleLZ_CompressOptions* pOptions = &unwrap;
                 return OodleLZ_Compress(compressor, pRawBuf, rawBuf.Length, pCompBuf, level, pOptions);
             }
         }
 
-        /// <summary>
-        /// Decompress some data from memory to memory, synchronously.
-        /// </summary>
-        /// <param name="compBuf">The buffer of the compressed data.</param>
-        /// <param name="rawBuf">The buffer to write the decompressed data to.</param>
-        /// <param name="fuzzSafe">(Optional) Should the decode fail if it contains non-fuzz safe codecs?</param>
-        /// <param name="checkCRC">(Optional) If data could be corrupted and you want to know about it, pass <see cref="OodleLZ_CheckCRC.Yes"/>.</param>
-        /// <param name="verbosity">(Optional) If not <see cref="OodleLZ_Verbosity.None"/>, logs some info.</param>
-        /// <param name="threadPhase">(Optional) for threaded decode; see OodleLZ_About_ThreadPhasedDecode (default <see cref="OodleLZ_Decode_ThreadPhase.Unthreaded"/>).</param>
-        /// <returns>The number of decompressed bytes output, <see cref="OODLELZ_FAILED"/> if none can be decompressed.</returns>
+        /// <inheritdoc/>
         public unsafe long Decompress(
             ReadOnlySpan<byte> compBuf,
             Span<byte> rawBuf,
+            long rawLen,
             OodleLZ_FuzzSafe fuzzSafe = OodleLZ_FuzzSafe.Yes,
             OodleLZ_CheckCRC checkCRC = OodleLZ_CheckCRC.No,
             OodleLZ_Verbosity verbosity = OodleLZ_Verbosity.None,
             OodleLZ_Decode_ThreadPhase threadPhase = OodleLZ_Decode_ThreadPhase.Unthreaded)
         {
-            fixed (byte* pCompBuf = &compBuf[0])
-            fixed (byte* pRawBuf = &rawBuf[0])
+            fixed (byte* pCompBuf = compBuf)
+            fixed (byte* pRawBuf = rawBuf)
             {
                 return OodleLZ_Decompress(
                     pCompBuf,
                     compBuf.Length,
                     pRawBuf,
-                    rawBuf.Length,
+                    (nint)rawLen,
                     fuzzSafe,
                     checkCRC,
                     verbosity,
@@ -78,45 +194,32 @@ namespace OodleCoreSharp
             }
         }
 
-        /// <summary>
-        /// Provides default compression options.
-        /// </summary>
-        /// <remarks>Use to fill your own <see cref="OodleLZ_CompressOptions"/>, then change individual fields.</remarks>
-        /// <param name="compressor">Which OodleLZ variant to use in compression.</param>
-        /// <param name="lzLevel">The compression level.</param>
-        /// <returns>Default compression options.</returns>
+        /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe OodleLZ_CompressOptions CompressOptions_GetDefault(
             OodleLZ_Compressor compressor = OodleLZ_Compressor.Invalid,
             OodleLZ_CompressionLevel lzLevel = OodleLZ_CompressionLevel.Normal)
             => *OodleLZ_CompressOptions_GetDefault(compressor, lzLevel);
 
-        /// <summary>
-        /// Get maximum expanded size for compBuf alloc.
-        /// </summary>
-        /// <param name="compressor">Which OodleLZ variant to use in compression.</param>
-        /// <param name="rawSize">Uncompressed size you will compress into this buffer.</param>
-        /// <remarks>This is actually larger than the maximum compressed stream, it includes trash padding.</remarks>
-        /// <returns>The maximum expanded size for compBuf alloc.</returns>
+        /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long GetCompressedBufferSizeNeeded(
             OodleLZ_Compressor compressor,
             long rawSize)
             => OodleLZ_GetCompressedBufferSizeNeeded((nint)rawSize);
 
-        /// <summary>
-        /// The decode buffer size required for the specified raw length.
-        /// </summary>
-        /// <param name="compressor">Which OodleLZ variant to use in compression.</param>
-        /// <param name="rawSize">Uncompressed size without padding.</param>
-        /// <param name="corruptionPossible">Whether or not it is possible for the decoder to get corrupted data.</param>
-        /// <returns>The decode buffer size required for the specified raw length.</returns>
+        /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long GetDecodeBufferSize(
             OodleLZ_Compressor compressor,
             long rawSize,
             bool corruptionPossible)
             => OodleLZ_GetDecodeBufferSize((nint)rawSize, corruptionPossible);
+
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetPrint(OodlePrintCallback callback)
+            => PrintCallback = callback;
 
         #endregion
 
@@ -138,13 +241,7 @@ namespace OodleCoreSharp
         /// <param name="scratchMem">(Optional) Pointer to scratch memory.</param>
         /// <param name="scratchSize">(optional) size of scratch memory (see <see cref="OodleLZ_GetCompressScratchMemBound"/>)</param>
         /// <returns>Size of compressed data written, or <see cref="OODLELZ_FAILED"/> for failure.</returns>
-#if WINDOWS
-        [LibraryImport("oo2core_5_win64.dll")]
-#elif OSX
-        [LibraryImport("liboo2coremac64.2.5.dylib")]
-#elif LINUX
-        [LibraryImport("liboo2corelinux64.so.5")]
-#endif
+        [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
         private static unsafe partial nint OodleLZ_Compress(
@@ -181,13 +278,7 @@ namespace OodleCoreSharp
         /// must be at least <see cref="OodleLZDecoder_MemorySizeNeeded"/> bytes to be used</param>
         /// <param name="threadPhase">(Optional) for threaded decode; see OodleLZ_About_ThreadPhasedDecode (default <see cref="OodleLZ_Decode_ThreadPhase.Unthreaded"/>).</param>
         /// <returns>The number of decompressed bytes output, <see cref="OODLELZ_FAILED"/> if none can be decompressed.</returns>
-#if WINDOWS
-        [LibraryImport("oo2core_5_win64.dll")]
-#elif OSX
-        [LibraryImport("liboo2coremac64.2.5.dylib")]
-#elif LINUX
-        [LibraryImport("liboo2corelinux64.so.5")]
-#endif
+        [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
         private static unsafe partial nint OodleLZ_Decompress(
@@ -213,13 +304,7 @@ namespace OodleCoreSharp
         /// <param name="compressor">Which OodleLZ variant to use in compression.</param>
         /// <param name="lzLevel">The compression level.</param>
         /// <returns>A pointer to default compression options.</returns>
-#if WINDOWS
-        [LibraryImport("oo2core_5_win64.dll")]
-#elif OSX
-        [LibraryImport("liboo2coremac64.2.5.dylib")]
-#elif LINUX
-        [LibraryImport("liboo2corelinux64.so.5")]
-#endif
+        [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
         private static unsafe partial OodleLZ_CompressOptions* OodleLZ_CompressOptions_GetDefault(
@@ -232,13 +317,7 @@ namespace OodleCoreSharp
         /// <remarks>This is actually larger than the maximum compressed stream, it includes trash padding.</remarks>
         /// <param name="rawSize">Uncompressed size you will compress into this buffer.</param>
         /// <returns>The maximum expanded size for compBuf alloc.</returns>
-#if WINDOWS
-        [LibraryImport("oo2core_5_win64.dll")]
-#elif OSX
-        [LibraryImport("liboo2coremac64.2.5.dylib")]
-#elif LINUX
-        [LibraryImport("liboo2corelinux64.so.5")]
-#endif
+        [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
         private static partial nint OodleLZ_GetCompressedBufferSizeNeeded(nint rawSize);
@@ -249,13 +328,7 @@ namespace OodleCoreSharp
         /// <param name="rawSize">Uncompressed size without padding.</param>
         /// <param name="corruptionPossible">Whether or not it is possible for the decoder to get corrupted data.</param>
         /// <returns>The decode buffer size required for the specified raw length.</returns>
-#if WINDOWS
-        [LibraryImport("oo2core_5_win64.dll")]
-#elif OSX
-        [LibraryImport("liboo2coremac64.2.5.dylib")]
-#elif LINUX
-        [LibraryImport("liboo2corelinux64.so.5")]
-#endif
+        [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall)])]
         [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
         private static partial nint OodleLZ_GetDecodeBufferSize(

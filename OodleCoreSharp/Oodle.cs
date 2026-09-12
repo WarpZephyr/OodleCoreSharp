@@ -1,7 +1,7 @@
 ﻿using OodleCoreSharp.Exceptions;
-using System;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace OodleCoreSharp
 {
@@ -11,129 +11,75 @@ namespace OodleCoreSharp
     public static class Oodle
     {
         /// <summary>
-        /// Whether or not oodle5 is available.
+        /// Tries to load an oodle library.
         /// </summary>
-        private static bool Oodle5Exists;
-
-        /// <summary>
-        /// Whether or not oodle6 is available.
-        /// </summary>
-        private static bool Oodle6Exists;
-
-        /// <summary>
-        /// Whether or not oodle8 is available.
-        /// </summary>
-        private static bool Oodle8Exists;
-
-        /// <summary>
-        /// Whether or not oodle9 is available.
-        /// </summary>
-        private static bool Oodle9Exists;
-
-        /// <summary>
-        /// Whether or not oodle5 is available.
-        /// </summary>
-        /// <returns>Whether or not oodle5 is available.</returns>
+        /// <param name="handle">The handle if loaded, or <see cref="nint.Zero"/>.</param>
+        /// <returns>Whether or not the library loaded.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool CanUseOodle5()
+        internal static bool TryLoadCore(int version, [NotNullWhen(true)] out nint handle)
         {
-            if (Oodle5Exists)
+            if (NativeResolver.TryLoad(OSPlatform.Windows, $"oo2core_{version}_win64.dll", out handle))
                 return true;
-#if WINDOWS
-            return Oodle5Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}\oo2core_5_win64.dll");
-#elif OSX
-            return Oodle5Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}/liboo2coremac64.2.5.dylib");
-#elif LINUX
-            return Oodle5Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}/liboo2corelinux64.so.5");
-#endif
+
+            if (NativeResolver.TryLoad(OSPlatform.Linux, $"liboo2corelinux64.so.{version}", out handle))
+                return true;
+
+            if (NativeResolver.TryLoad(OSPlatform.OSX, $"liboo2coremac64.2.{version}.dylib", out handle))
+                return true;
+
+            // Unsupported platform
+            handle = default;
+            return false;
         }
 
         /// <summary>
-        /// Whether or not oodle6 is available.
+        /// Tries to load the latest available Oodle library.
         /// </summary>
-        /// <returns>Whether or not oodle6 is available.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool CanUseOodle6()
+        /// <param name="oodle">An instance for accessing oodle functions, or null.</param>
+        /// <returns>Whether or not the library loaded.</returns>
+        public static bool TryLoad([NotNullWhen(true)] out IOodle? oodle)
         {
-            if (Oodle6Exists)
+            if (Oodle29.TryLoad(out Oodle29? oodle9))
+            {
+                oodle = oodle9;
                 return true;
-#if WINDOWS
-            return Oodle6Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}\oo2core_6_win64.dll");
-#elif OSX
-            return Oodle6Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}/liboo2coremac64.2.6.dylib");
-#elif LINUX
-            return Oodle6Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}/liboo2corelinux64.so.6");
-#endif
+            }
+
+            if (Oodle28.TryLoad(out Oodle28? oodle8))
+            {
+                oodle = oodle8;
+                return true;
+            }
+
+            if (Oodle26.TryLoad(out Oodle26? oodle6))
+            {
+                oodle = oodle6;
+                return true;
+            }
+
+            if (Oodle25.TryLoad(out Oodle25? oodle5))
+            {
+                oodle = oodle5;
+                return true;
+            }
+
+            oodle = default;
+            return false;
         }
 
         /// <summary>
-        /// Whether or not oodle8 is available.
+        /// Load an oodle instance, or throw if one is not found.
         /// </summary>
-        /// <returns>Whether or not oodle8 is available.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool CanUseOodle8()
+        /// <returns>An oodle instance.</returns>
+        /// <exception cref="OodleNotFoundException">No oodle libraries were available.</exception>
+        public static IOodle Load()
         {
-            if (Oodle8Exists)
-                return true;
-#if WINDOWS
-            return Oodle8Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}\oo2core_8_win64.dll");
-#elif OSX
-            return Oodle8Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}/liboo2coremac64.2.8.dylib");
-#elif LINUX
-            return Oodle8Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}/liboo2corelinux64.so.8");
-#endif
-        }
+            if (TryLoad(out IOodle? oodle))
+            {
+                return oodle;
+            }
 
-        /// <summary>
-        /// Whether or not oodle9 is available.
-        /// </summary>
-        /// <returns>Whether or not oodle9 is available.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool CanUseOodle9()
-        {
-            if (Oodle9Exists)
-                return true;
-#if WINDOWS
-            return Oodle9Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}\oo2core_9_win64.dll");
-#elif OSX
-            return Oodle9Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}/liboo2coremac64.2.9.dylib");
-#elif LINUX
-            return Oodle9Exists = File.Exists($@"{AppDomain.CurrentDomain.BaseDirectory}/liboo2corelinux64.so.9");
-#endif
-        }
-
-        /// <summary>
-        /// Get an oodle compressor.
-        /// </summary>
-        /// <returns>An oodle compressor.</returns>
-        /// <exception cref="OodleNotFoundException">No oodle compressors were available.</exception>
-        public static IOodleCompressor GetOodleCompressor()
-        {
-            if (CanUseOodle9())
-                return new Oodle29();
-
-            if (CanUseOodle8())
-                return new Oodle28();
-
-            if (CanUseOodle6())
-                return new Oodle26();
-
-            if (CanUseOodle5())
-                return new Oodle25();
-
-#if WINDOWS
-            throw new OodleNotFoundException($"Could not find a supported version of oo2core.\n" +
-                $"Please copy oo2core_5_win64.dll, oo2core_6_win64.dll, oo2core_8_win64.dll, or oo2core_9_win64.dll into the program folder at: \"{AppDomain.CurrentDomain.BaseDirectory}\"\n" +
-                $"It is generally in the same folder as the game's exe file.");
-#elif OSX
-            throw new OodleNotFoundException($"Could not find a supported version of oo2core." +
-                $"Please copy liboo2coremac64.2.5.dylib, liboo2coremac64.2.6.dylib, liboo2coremac64.2.8.dylib, or liboo2coremac64.2.9.dylib into the folder directory at: \"{AppDomain.CurrentDomain.BaseDirectory}\"" +
-                $"It is generally in the same folder as the game's exe file.");
-#elif LINUX
-            throw new OodleNotFoundException($"Could not find a supported version of oo2core." +
-                $"Please copy liboo2corelinux64.so.5, liboo2corelinux64.so.6, liboo2corelinux64.so.8, or liboo2corelinux64.so.9 into the folder directory at: \"{AppDomain.CurrentDomain.BaseDirectory}\"" +
-                $"It is generally in the same folder as the game's exe file.");
-#endif
+            throw new OodleNotFoundException("Could not find an oodle library.");
         }
     }
 }

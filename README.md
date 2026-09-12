@@ -28,21 +28,25 @@ liboo2corelinux64.so.9
 Only one oodle library is necessary to get started.  
 
 # Development Usage
-The easiest way to make use of any given oodle library is to call Oodle.GetOodleCompressor().  
+The easiest way to make use of any given oodle library is to call Oodle.Load() or Oodle.TryLoad(out IOodle? oodle).  
 This returns the newest oodle library imports available.  
 
-It is also possible to choose a specific oodle version, by checking if it is available, then getting an instance of it.  
-For example, a developer could call Oodle.CanUseOodle5() to see if it is available.  
-A developer could then create a new Oodle25() object.  
+It is also possible to get an instance of a specific version by calling TryLoad() on it.  
+Such as calling Oodle25.TryLoad(out Oodle25? oodle).  
 
-What is supported right now is pretty barebones, mainly compression and decompression with options.  
+The functionality supported right now includes:  
+- Decompression (With Options)  
+- Compression (With Options)  
+- Getting Default Options  
+- Setting a single global logging callback per version of Oodle  
+
 This may be expanded in the future.  
 
 # Supports
 | Oodle  |  Platforms                                                                           |
 | :----- | :----------------------------------------------------------------------------------- |
 | 2.5    | <ul><li>Windows</li>           <li>Linux (Untested)</li><li>OSX (Untested)</li></ul> |
-| 2.6    | <ul><li>Windows (Untested)</li><li>Linux (Untested)</li><li>OSX (Untested)</li></ul> |
+| 2.6    | <ul><li>Windows</li>           <li>Linux (Untested)</li><li>OSX (Untested)</li></ul> |
 | 2.8    | <ul><li>Windows</li>           <li>Linux (Untested)</li><li>OSX (Untested)</li></ul> |
 | 2.9    | <ul><li>Windows (Untested)</li><li>Linux (Untested)</li><li>OSX (Untested)</li></ul> |
 
