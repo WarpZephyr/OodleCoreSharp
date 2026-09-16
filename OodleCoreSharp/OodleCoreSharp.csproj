@@ -8,6 +8,32 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  
+  <!-- NuGet Properties -->
+  <PropertyGroup>
+	<AssemblyName>OodleCoreSharp</AssemblyName>
+	<PackageId>OodleCoreSharp</PackageId>
+	<Version>0.1.0-preview</Version>
+	<Authors>WarpZephyr</Authors>
+	<Description>A simple C# wrapper for the oodle library, supporting multiple versions.</Description>
+	<PackageTags>csharp13;csharp14;dotnet10;aot;nativeaot</PackageTags>
+	<Title>OodleCoreSharp</Title>
+	<RepositoryUrl>https://github.com/WarpZephyr/OodleCoreSharp</RepositoryUrl>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<IncludeSymbols>True</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	<FileVersion>0.1.0</FileVersion>
+	<AssemblyVersion>0.1.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <!-- NuGet Items -->
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <!-- Aot Properties -->
   <PropertyGroup>
