@@ -8,22 +8,22 @@ Users can generally find oodle library files in games that use them next to the 
 
 The following are the library files expected by this library per platform.  
 Windows oodle library files include:  
-oo2core_5_win64.dll  
-oo2core_6_win64.dll  
-oo2core_8_win64.dll  
-oo2core_9_win64.dll  
+- oo2core_5_win64.dll  
+- oo2core_6_win64.dll  
+- oo2core_8_win64.dll  
+- oo2core_9_win64.dll  
 
 OSX oodle library files include:  
-liboo2coremac64.2.5.dylib  
-liboo2coremac64.2.6.dylib  
-liboo2coremac64.2.8.dylib  
-liboo2coremac64.2.9.dylib  
+- liboo2coremac64.2.5.dylib  
+- liboo2coremac64.2.6.dylib  
+- liboo2coremac64.2.8.dylib  
+- liboo2coremac64.2.9.dylib  
 
 Linux oodle library files include:  
-liboo2corelinux64.so.5  
-liboo2corelinux64.so.6  
-liboo2corelinux64.so.8  
-liboo2corelinux64.so.9  
+- liboo2corelinux64.so.5  
+- liboo2corelinux64.so.6  
+- liboo2corelinux64.so.8  
+- liboo2corelinux64.so.9  
 
 Only one oodle library is necessary to get started.  
 
