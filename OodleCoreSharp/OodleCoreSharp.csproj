@@ -133,17 +133,17 @@
 
 	<!-- Oodle Interop Libraries -->
 	<ItemGroup>
-		<None Update="runtimes\win-x64\native\oodleinterop.dll">
+		<None Include="runtimes\win-x64\native\oodleinterop.dll">
 			<Pack>true</Pack>
 			<PackagePath>runtimes\win-x64\native\</PackagePath>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="runtimes\linux-x64\native\liboodleinterop.so">
+		<None Include="runtimes\linux-x64\native\liboodleinterop.so">
 			<Pack>true</Pack>
 			<PackagePath>runtimes\linux-x64\native\</PackagePath>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="runtimes\osx-x64\native\liboodleinterop.dylib">
+		<None Include="runtimes\osx-x64\native\liboodleinterop.dylib">
 			<Pack>true</Pack>
 			<PackagePath>runtimes\osx-x64\native\</PackagePath>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
