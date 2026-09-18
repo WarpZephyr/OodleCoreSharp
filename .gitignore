@@ -361,4 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Native build folders
+/oodleinterop/build-win
 /oodleinterop/build-linux
+/oodleinterop/build-osx

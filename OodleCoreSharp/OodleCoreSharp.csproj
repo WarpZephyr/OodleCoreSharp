@@ -1,96 +1,152 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Project Properties -->
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-	<LangVersion>latest</LangVersion>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  
-  <!-- NuGet Properties -->
-  <PropertyGroup>
-	<AssemblyName>OodleCoreSharp</AssemblyName>
-	<PackageId>OodleCoreSharp</PackageId>
-	<Version>0.1.0-preview</Version>
-	<Authors>WarpZephyr</Authors>
-	<Description>A simple C# wrapper for the oodle library, supporting multiple versions.</Description>
-	<PackageTags>csharp13;csharp14;dotnet10;aot;nativeaot</PackageTags>
-	<Title>OodleCoreSharp</Title>
-	<RepositoryUrl>https://github.com/WarpZephyr/OodleCoreSharp</RepositoryUrl>
-	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<PackageReadmeFile>README.md</PackageReadmeFile>
-	<IncludeSymbols>True</IncludeSymbols>
-	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	<FileVersion>0.1.0</FileVersion>
-	<AssemblyVersion>0.1.0</AssemblyVersion>
-  </PropertyGroup>
+	<!-- Project Properties -->
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
 
-  <!-- NuGet Items -->
-  <ItemGroup>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+	<!-- NuGet Properties -->
+	<PropertyGroup>
+		<AssemblyName>OodleCoreSharp</AssemblyName>
+		<PackageId>OodleCoreSharp</PackageId>
+		<Version>0.1.0-preview</Version>
+		<Authors>WarpZephyr</Authors>
+		<Description>A simple C# wrapper for the oodle library, supporting multiple versions.</Description>
+		<PackageTags>csharp13;csharp14;dotnet10;aot;nativeaot</PackageTags>
+		<Title>OodleCoreSharp</Title>
+		<RepositoryUrl>https://github.com/WarpZephyr/OodleCoreSharp</RepositoryUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<FileVersion>0.1.0</FileVersion>
+		<AssemblyVersion>0.1.0</AssemblyVersion>
+	</PropertyGroup>
 
-  <!-- Aot Properties -->
-  <PropertyGroup>
-	<IsAotCompatible>True</IsAotCompatible>
-  </PropertyGroup>
+	<!-- NuGet Items -->
+	<ItemGroup>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
-  <!-- Analyzer Properties -->
-  <PropertyGroup>
-	<AnalysisMode>All</AnalysisMode>
-	<!-- 
-      CA1707: Remove underscores from the type name (Native Interop and Consistency)
-	  CA1008: Add a member that has a value of zero with a suggested name of 'None' (Native Interop)
-	  IDE0130: Namespace does not match folder structure (Safer and simpler namespace for Native types)
-    -->
-	<NoWarn>$(NoWarn);CA1707;CA1008;IDE0130</NoWarn>
-  </PropertyGroup>
+	<!-- Aot Properties -->
+	<PropertyGroup>
+		<IsAotCompatible>True</IsAotCompatible>
+	</PropertyGroup>
 
-  <!-- Libraries -->
-  <ItemGroup>
-    <None Update="oo2core_5_win64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="oo2core_6_win64.dll">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="oo2core_8_win64.dll">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="oo2core_9_win64.dll">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-	<None Update="liboo2corelinux64.so.5">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="liboo2corelinux64.so.6">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="liboo2corelinux64.so.8">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="liboo2corelinux64.so.9">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-	<None Update="liboo2coremac64.2.5.dylib">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="liboo2coremac64.2.6.dylib">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="liboo2coremac64.2.8.dylib">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="liboo2coremac64.2.9.dylib">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-	<None Update="oodleinterop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<!-- Analyzer Properties -->
+	<PropertyGroup>
+		<AnalysisMode>All</AnalysisMode>
+		<!-- 
+		CA1707: Remove underscores from the type name (Native Interop and Consistency)
+	    CA1008: Add a member that has a value of zero with a suggested name of 'None' (Native Interop)
+	    IDE0130: Namespace does not match folder structure (Safer and simpler namespace for Native types)
+        -->
+		<NoWarn>$(NoWarn);CA1707;CA1008;IDE0130</NoWarn>
+	</PropertyGroup>
+
+	<!-- Oodle Libraries Indirect -->
+	<ItemGroup>
+		<None Update="oo2core_5_win64.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="oo2core_6_win64.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="oo2core_8_win64.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="oo2core_9_win64.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="liboo2corelinux64.so.5">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="liboo2corelinux64.so.6">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="liboo2corelinux64.so.8">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="liboo2corelinux64.so.9">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="liboo2coremac64.2.5.dylib">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="liboo2coremac64.2.6.dylib">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="liboo2coremac64.2.8.dylib">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="liboo2coremac64.2.9.dylib">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	
+	<!-- Oodle Libraries Direct -->
+	<ItemGroup>
+		<None Update="runtimes\win-x64\native\oo2core_5_win64.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\win-x64\native\oo2core_6_win64.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\win-x64\native\oo2core_8_win64.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\win-x64\native\oo2core_9_win64.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\linux-x64\native\liboo2corelinux64.so.5">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\linux-x64\native\liboo2corelinux64.so.6">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\linux-x64\native\liboo2corelinux64.so.8">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\linux-x64\native\liboo2corelinux64.so.9">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\osx-x64\native\liboo2coremac64.2.5.dylib">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\osx-x64\native\liboo2coremac64.2.6.dylib">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\osx-x64\native\liboo2coremac64.2.8.dylib">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\osx-x64\native\liboo2coremac64.2.9.dylib">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<!-- Oodle Interop Libraries -->
+	<ItemGroup>
+		<None Update="runtimes\win-x64\native\oodleinterop.dll">
+			<Pack>true</Pack>
+			<PackagePath>runtimes\win-x64\native\</PackagePath>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\linux-x64\native\liboodleinterop.so">
+			<Pack>true</Pack>
+			<PackagePath>runtimes\linux-x64\native\</PackagePath>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\osx-x64\native\liboodleinterop.dylib">
+			<Pack>true</Pack>
+			<PackagePath>runtimes\osx-x64\native\</PackagePath>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 </Project>

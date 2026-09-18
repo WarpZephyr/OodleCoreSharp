@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -17,6 +19,16 @@ internal static class NativeResolver
     private static readonly ConcurrentQueue<nint> Registry = new();
 
     /// <summary>
+    /// The path to the app directory.
+    /// </summary>
+    private static readonly string AppBaseDirectory = AppContext.BaseDirectory;
+
+    /// <summary>
+    /// The runtime identifier for native libraries.
+    /// </summary>
+    private static readonly string NativeRid = GetNativeRid();
+
+    /// <summary>
     /// Initializes the resolver.
     /// </summary>
     static NativeResolver()
@@ -25,13 +37,26 @@ internal static class NativeResolver
     }
 
     /// <summary>
-    /// Registers a resolver callback for library resolution.
+    /// Determines the native runtime identifier or defaults.
     /// </summary>
-    /// <param name="pResolve">The callback to register.</param>
-    public static unsafe void Register(delegate* managed<string, nint> pResolve)
+    /// <returns>The native runtime identifier or a default.</returns>
+    [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase",
+        Justification = "This lowercasing is for file pathing and normalization to uppercase is not valid.")]
+    private static string GetNativeRid()
     {
-        ArgumentNullException.ThrowIfNull(pResolve, nameof(pResolve));
-        Registry.Enqueue((nint)pResolve);
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            return $"win-{RuntimeInformation.ProcessArchitecture}".ToLowerInvariant();
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            return $"linux-{RuntimeInformation.ProcessArchitecture}".ToLowerInvariant();
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            return $"osx-{RuntimeInformation.ProcessArchitecture}".ToLowerInvariant();
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            return $"freebsd-{RuntimeInformation.ProcessArchitecture}".ToLowerInvariant();
+
+        return RuntimeInformation.RuntimeIdentifier;
     }
 
     /// <summary>
@@ -57,17 +82,35 @@ internal static class NativeResolver
     }
 
     /// <summary>
+    /// Registers a resolver callback for library resolution.
+    /// </summary>
+    /// <param name="pResolve">The callback to register.</param>
+    public static unsafe void Register(delegate* managed<string, nint> pResolve)
+    {
+        ArgumentNullException.ThrowIfNull(pResolve, nameof(pResolve));
+        Registry.Enqueue((nint)pResolve);
+    }
+
+    /// <summary>
     /// Tries to load a specified library if the specified platform is the current one.
     /// </summary>
     /// <param name="platform">The platform this library must load for.</param>
-    /// <param name="libraryName">The name of the library to load.</param>
+    /// <param name="libraryName">The file name of the library to load.</param>
     /// <param name="handle">The loaded handle or <see cref="nint.Zero"/> if not loaded.</param>
     /// <returns>Whether or not the library loaded.</returns>
     public static bool TryLoad(OSPlatform platform, string libraryName, [NotNullWhen(true)] out nint handle)
     {
         if (RuntimeInformation.IsOSPlatform(platform))
         {
+            // Attempt default
             if (NativeLibrary.TryLoad(libraryName, out handle))
+            {
+                return true;
+            }
+
+            // Attempt direct path
+            string path = Path.Combine(AppBaseDirectory, "runtimes", NativeRid, "native", libraryName);
+            if (NativeLibrary.TryLoad(path, out handle))
             {
                 return true;
             }
