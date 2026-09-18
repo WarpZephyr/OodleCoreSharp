@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace OodleCoreSharp;
@@ -27,6 +28,11 @@ internal static class NativeResolver
     /// The runtime identifier for native libraries.
     /// </summary>
     private static readonly string NativeRid = GetNativeRid();
+
+    /// <summary>
+    /// The simple runtime identifier for native libraries.
+    /// </summary>
+    private static readonly string? UniversalNativeRid = GetUniversalNativeRid();
 
     /// <summary>
     /// Initializes the resolver.
@@ -57,6 +63,28 @@ internal static class NativeResolver
             return $"freebsd-{RuntimeInformation.ProcessArchitecture}".ToLowerInvariant();
 
         return RuntimeInformation.RuntimeIdentifier;
+    }
+
+    /// <summary>
+    /// Determines the simple native runtime identifier or returns <see langword="null"/>.
+    /// </summary>
+    /// <returns>The simple native runtime identifier or <see langword="null"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static string? GetUniversalNativeRid()
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            return "win";
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            return "linux";
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            return "osx";
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            return "freebsd";
+
+        return null;
     }
 
     /// <summary>
@@ -108,11 +136,21 @@ internal static class NativeResolver
                 return true;
             }
 
-            // Attempt direct path
+            // Attempt direct path specific architecture
             string path = Path.Combine(AppBaseDirectory, "runtimes", NativeRid, "native", libraryName);
             if (NativeLibrary.TryLoad(path, out handle))
             {
                 return true;
+            }
+
+            // Attempt direct path universal architecture
+            if (UniversalNativeRid != null)
+            {
+                path = Path.Combine(AppBaseDirectory, "runtimes", UniversalNativeRid, "native", libraryName);
+                if (NativeLibrary.TryLoad(path, out handle))
+                {
+                    return true;
+                }
             }
         }
 
